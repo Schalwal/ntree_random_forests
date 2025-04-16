@@ -2,7 +2,7 @@ from sklearn.ensemble._forest import BaseForest, _generate_unsampled_indices, _g
 from sklearn.base import is_classifier
 from sklearn.metrics import mean_squared_error, accuracy_score
 from scipy.sparse import issparse
-from src.ntree_random_forest import Ntree_RF_Classifier, Ntree_RF_Regressor
+from src.ntree_tuning import Ntree_RF_Classifier, Ntree_RF_Regressor
 from warnings import warn
 import numpy as np
 from collections import OrderedDict
@@ -10,7 +10,7 @@ from typing import Union
 
 
 def tune_ntree_rf(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], X: np.ndarray, y: np.ndarray, min_trees: int = 10, max_trees: int = None, delta_trees: int = 10,  sample_random=False):
-    """Tune Random Forest for w.r.t. to n_trees considering the OOB error. For Regression it's the OOB-MSE and for Classification it's the Accuracy."""
+    """Tune Random Forest for w.r.t. to n_trees considering the OOB error. For Regression it's the OOB-MSE and for Classification it's 1 - Accuracy."""
 
     # 1. check correct argument type
     if not isinstance(rf_model, Ntree_RF_Regressor) and not isinstance(rf_model, Ntree_RF_Classifier):
