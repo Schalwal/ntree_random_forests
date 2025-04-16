@@ -1,1 +1,1 @@
-from .ntree_random_forest import Ntree_RF_Classifier, Ntree_RF_Regressor
+from .ntree_rf_classes import Ntree_RF_Classifier, Ntree_RF_Regressor
