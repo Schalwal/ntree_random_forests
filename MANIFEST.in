@@ -1,0 +1,4 @@
+exclude tests/*
+exclude *.pyc
+exlucde *.pyo
+exclude .gitignore
