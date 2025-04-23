@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ntree_tuning"
-version = "0.1.0"
+version = "0.1.3"
 description = "A brief description of your package"
+readme = "README.md"
 authors = [{ name = "Schalwal", email = "example@email.de" }]
 dependencies = [
     "scikit-learn>=1.3.2",
