@@ -28,7 +28,6 @@ class Ntree_GB_Classifier(GradientBoostingClassifier):
 
         predictions = np.argmax(output, axis=1)
         return predictions
-
 # 2.2 GB REGRESSOR
 
 

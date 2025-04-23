@@ -1,10 +1,10 @@
 from . import Ntree_GB_Regressor, Ntree_GB_Classifier
-from .utils import validate_ntree_parameters
+from ._utils import validate_ntree_parameters
 import numpy as np
 from typing import Union
 
 
-def tune_ntree_gb(gb_model: Union[Ntree_GB_Classifier, Ntree_GB_Regressor], X: np.ndarray, y: np.ndarray, min_trees: int = 10, max_trees: int = None, delta_trees: int = 10):
+def tune_ntree_gb(gb_model: Union[Ntree_GB_Classifier, Ntree_GB_Regressor], min_trees: int = 10, max_trees: int = None, delta_trees: int = 10):
     """Tune Gradient BOosting for w.r.t. to n_trees considering the OOB error. For Regression it's the OOB-MSE and for Classification it's 1 - Accuracy."""
 
     # 1. check correct argument type

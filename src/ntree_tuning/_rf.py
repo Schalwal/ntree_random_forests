@@ -1,5 +1,5 @@
 from . import Ntree_RF_Classifier, Ntree_RF_Regressor
-from .utils import validate_ntree_parameters
+from ._utils import validate_ntree_parameters
 from sklearn.ensemble._forest import BaseForest, _generate_unsampled_indices, _get_n_samples_bootstrap
 from sklearn.base import is_classifier
 from sklearn.metrics import mean_squared_error, accuracy_score
