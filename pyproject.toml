@@ -20,6 +20,5 @@ pythonpath = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",  # Specify the version of pytest you want to use
-    # Add other development dependencies here
+    "pytest>=7.0",
 ]

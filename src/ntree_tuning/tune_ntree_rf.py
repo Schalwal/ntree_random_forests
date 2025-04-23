@@ -1,4 +1,5 @@
 from . import Ntree_RF_Classifier, Ntree_RF_Regressor
+from .utils import validate_ntree_parameters
 from sklearn.ensemble._forest import BaseForest, _generate_unsampled_indices, _get_n_samples_bootstrap
 from sklearn.base import is_classifier
 from sklearn.metrics import mean_squared_error, accuracy_score
@@ -17,7 +18,7 @@ def tune_ntree_rf(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], X: n
             f"Expected an `rf_model` to be either `Ntree_RF_Classifier` or `Ntree_RF_Regressor`, but got {type(rf_model).__name__}.")
 
     # 2. ensure that `min_trees`, `delta_trees` and `max_trees` are correctly set
-    min_trees, max_trees, delta_trees = validate_tree_parameters(
+    min_trees, max_trees, delta_trees = validate_ntree_parameters(
         rf_model, min_trees, max_trees, delta_trees)
 
     # 3. calculate oob_errors
@@ -112,44 +113,3 @@ def custom_compute_oob_predictions(rf: BaseForest, X, y, n_trees, sample_random=
         oob_pred[..., k] /= n_oob_pred[..., [k]]
 
     return oob_pred
-
-
-def validate_tree_parameters(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], min_trees, max_trees, delta_trees):
-    """
-    Validates the parameters for tuning the n_trees in a random forest.
-
-    Parameters:
-    - min_trees (int): Minimum number of trees.
-    - max_trees (int): Maximum number of trees.
-    - delta_trees (int): Step size for the number of trees.
-
-    Raises:
-    - ValueError: If any of the parameters are invalid.
-    """
-
-    # Set max_trees to n_estimators of model if not specified
-    n_estimators = rf_model.n_estimators
-    if max_trees is None:
-        max_trees = n_estimators
-    elif max_trees > n_estimators:
-        max_trees = n_estimators
-        warn(
-            f"You set `max_trees` = {max_trees} too high. It was set to {n_estimators}, the total number of trees in the model.")
-
-    # Check if min_trees is a non-negative integer
-    if not isinstance(min_trees, int) or min_trees < 0:
-        raise ValueError("min_trees must be a non-negative integer.")
-
-    # Check if max_trees is a positive integer
-    if not isinstance(max_trees, int) or max_trees <= 0:
-        raise ValueError("max_trees must be a positive integer.")
-
-    # Check if delta_trees is a positive integer
-    if not isinstance(delta_trees, int) or delta_trees <= 0:
-        raise ValueError("delta_trees must be a positive integer.")
-
-    # Check if min_trees is less than or equal to max_trees
-    if min_trees > max_trees:
-        raise ValueError("min_trees must be less than or equal to max_trees.")
-
-    return min_trees, max_trees, delta_trees
