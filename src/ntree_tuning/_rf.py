@@ -2,14 +2,14 @@ from . import Ntree_RF_Classifier, Ntree_RF_Regressor
 from ._utils import validate_ntree_parameters
 from sklearn.ensemble._forest import BaseForest, _generate_unsampled_indices, _get_n_samples_bootstrap
 from sklearn.base import is_classifier
-from sklearn.metrics import mean_squared_error, accuracy_score
+from sklearn.metrics import mean_squared_error, accuracy_score, mean_absolute_error
 from scipy.sparse import issparse
 from warnings import warn
 import numpy as np
 from typing import Union
 
 
-def tune_ntree_rf(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], X: np.ndarray, y: np.ndarray, min_trees: int = 10, max_trees: int = None, delta_trees: int = 10,  sample_random=False):
+def tune_ntree_rf(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], X: np.ndarray, y: np.ndarray, min_trees: int = 10, max_trees: int = None, delta_trees: int = 10,  sample_random: bool = False, random_state: int = None):
     """Tune Random Forest for w.r.t. to n_trees considering the OOB error. For Regression it's the OOB-MSE and for Classification it's 1 - Accuracy."""
 
     # 1. check correct argument type
@@ -25,18 +25,25 @@ def tune_ntree_rf(rf_model: Union[Ntree_RF_Classifier, Ntree_RF_Regressor], X: n
     oob_errors = {}
     for n_trees in range(min_trees, max_trees+1, delta_trees):
         oob_preds = custom_compute_oob_predictions(
-            rf_model, X, y, n_trees, sample_random=sample_random).squeeze()
+            rf_model, X, y, n_trees, sample_random=sample_random, random_state=random_state).squeeze()
         if isinstance(rf_model, Ntree_RF_Classifier):
             # transformation for classification
             oob_preds = oob_preds.argmax(axis=1)
             oob_error = 1 - accuracy_score(oob_preds, y)
         else:
-            oob_error = mean_squared_error(oob_preds, y)
+            if rf_model.criterion == 'squared_error':
+                oob_error = mean_squared_error(oob_preds, y)
+            elif rf_model.criterion == 'absolute_error':
+                oob_error = mean_absolute_error(oob_preds, y)
+            else:
+                warn('This function only supports oob_error-calculation with mean squared error or mean absolute error. OOB error now computed with MSE.')
+                oob_error = mean_squared_error(oob_preds, y)
+
         oob_errors[n_trees] = oob_error
     return oob_errors
 
 
-def custom_compute_oob_predictions(rf: BaseForest, X, y, n_trees, sample_random=False):
+def custom_compute_oob_predictions(rf: BaseForest, X, y, n_trees, sample_random=False, random_state=None):
     """Compute oob predictions for given X and y"""
 
     # Prediction requires X to be in CSR format
@@ -82,8 +89,9 @@ def custom_compute_oob_predictions(rf: BaseForest, X, y, n_trees, sample_random=
         )
 
     if sample_random:
-        tree_indices = np.random.choice(
-            rf.n_estimators, size=n_trees, replace=False)
+        rng = np.random.default_rng(
+            random_state) if random_state is not None else np.random.default_rng()
+        tree_indices = rng.choice(rf.n_estimators, size=n_trees, replace=False)
     else:
         tree_indices = np.arange(n_trees)
 
