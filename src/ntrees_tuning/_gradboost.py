@@ -12,14 +12,14 @@ class Ntree_GradBoost_Classifier(GradientBoostingClassifier):
     Please refer to the sklearn-documentation for the standard parameters here: 
     https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html
 
-    The only difference are the two extra methods `predict_ntree` and `tune_ntree`.
+    The only difference are the two extra methods `predict_ntrees` and `tune_ntree`.
 
     **Note that you MUST provide a value for `subsample` < 1 s.t. there can be oob-samples.**
 
     Methods (additional to sklearn):
     -------------------------------
 
-        `predict_ntree(X, ntrees)`:
+        `predict_ntrees(X, ntrees)`:
             This method is like the `predict` method only that it let's you choose how many trees of the forest should be used for prediction. Read the method description for more details.
 
         `tune_ntree()`:
@@ -33,7 +33,7 @@ class Ntree_GradBoost_Classifier(GradientBoostingClassifier):
             ValueError(
                 "In order to tune `ntrees` w.r.t. to the oob-error you need to set `subsample` < 1.")
 
-    def predict_ntrees(self, X, n_trees=None):
+    def predict_ntrees(self, X, ntrees=None):
         """
         Generate predictions with the `Ntree_GradBoost_Classifier` model on a dataset X and choose the number of trees used for that prediction.
 
@@ -44,13 +44,13 @@ class Ntree_GradBoost_Classifier(GradientBoostingClassifier):
         Returns:
             np.ndarray: 1D-np.ndarray with predictions. As many predictions as observations in X.
         """
-        if n_trees is None:
-            n_trees = self.n_estimators  # Use all trees by default
+        if ntrees is None:
+            ntrees = self.n_estimators  # Use all trees by default
         else:
             # Ensure we don't exceed the number of trees
-            n_trees = min(n_trees, self.n_estimators)
+            ntrees = min(ntrees, self.n_estimators)
 
-        trees = self.estimators_[:n_trees]
+        trees = self.estimators_[:ntrees]
         N_trees, n_classes = trees.shape
         N = X.shape[0]
         output = np.zeros((N, n_classes))
@@ -94,14 +94,14 @@ class Ntree_GradBoost_Regressor(GradientBoostingRegressor):
     Please refer to the sklearn-documentation for the standard parameters here: 
     https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html
 
-    The only difference are the two extra methods `predict_ntree` and `tune_ntree`.
+    The only difference are the two extra methods `predict_ntrees` and `tune_ntree`.
 
     **Note that you MUST provide a value for `subsample` < 1 s.t. there can be oob-samples.**
 
     Methods (additional to sklearn):
     -------------------------------
 
-        `predict_ntree(X, ntrees)`:
+        `predict_ntrees(X, ntrees)`:
             This method is like the `predict` method only that it let's you choose how many trees of the forest should be used for prediction. Read the method description for more details.
 
         `tune_ntree()`:
@@ -113,23 +113,23 @@ class Ntree_GradBoost_Regressor(GradientBoostingRegressor):
                          init=init, random_state=random_state, max_features=max_features, alpha=alpha, verbose=verbose, max_leaf_nodes=max_leaf_nodes, warm_start=warm_start, validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change, tol=tol, ccp_alpha=ccp_alpha
                          )
 
-    def predict_ntrees(self, X, n_trees=None):
+    def predict_ntrees(self, X, ntrees=None):
         """
         Generate predictions with the `Ntree_GradBoost_Regressor` model on a dataset X and choose the number of trees used for that prediction.
 
         Args:
             X (np.ndarray): the data to predict on
-            n_trees (int, optional): The number of trees used in the prediction. Defaults to None.
+            ntrees (int, optional): The number of trees used in the prediction. Defaults to None.
 
         Returns:
             np.ndarray: 1D-np.ndarray with predictions. As many predictions as observations in X.
         """
-        if n_trees is None:
-            n_trees = self.n_estimators  # Use all trees by default
+        if ntrees is None:
+            ntrees = self.n_estimators  # Use all trees by default
         else:
             # Ensure we don't exceed the number of trees
-            n_trees = min(n_trees, self.n_estimators)
-        trees = self.estimators_[:n_trees]
+            ntrees = min(ntrees, self.n_estimators)
+        trees = self.estimators_[:ntrees]
         predictions = np.array([tree[0].predict(X)
                                for tree in trees]).sum(axis=0)
         return predictions

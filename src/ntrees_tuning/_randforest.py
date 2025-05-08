@@ -16,12 +16,12 @@ class Ntree_RandForest_Classifier(RandomForestClassifier):
     Please refer to the sklearn-documentation for the standard parameters here: 
     https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
 
-    The only difference are the two extra methods `predict_ntree` and `tune_ntree`.
+    The only difference are the two extra methods `predict_ntrees` and `tune_ntree`.
 
     Methods (additional to sklearn):
     -------------------------------
 
-        `predict_ntree(X, ntrees, sample_random)`:
+        `predict_ntrees(X, ntrees, sample_random)`:
             This method is like the `predict` method only that it let's you choose how many trees of the forest should be used for prediction. The `sample_random` parameter lets you decide which how the trees should be selected. Read the method description for more details.
 
         `tune_ntree(X, y, min_trees, max_trees, delta_trees, sample_random, random_state)`:
@@ -32,7 +32,7 @@ class Ntree_RandForest_Classifier(RandomForestClassifier):
         super().__init__(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features, max_leaf_nodes=max_leaf_nodes,
                          min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start, class_weight=class_weight, ccp_alpha=ccp_alpha, max_samples=max_samples)
 
-    def predict_ntrees(self, X, n_trees=None, sample_random=True):
+    def predict_ntrees(self, X, ntrees=None, sample_random=True):
         """Generate predictions with the `Ntree_RandForest_Classifier` model on a dataset X and choose the number of trees used for that prediction.
 
         Args:
@@ -44,17 +44,17 @@ class Ntree_RandForest_Classifier(RandomForestClassifier):
         Returns:
             np.ndarray: 1D-np.ndarray with predictions. As many predictions as observations in X.
         """
-        if n_trees is None:
-            n_trees = self.n_estimators  # Use all trees by default
+        if ntrees is None:
+            ntrees = self.n_estimators  # Use all trees by default
         else:
             # Ensure we don't exceed the number of trees
-            n_trees = min(n_trees, self.n_estimators)
+            ntrees = min(ntrees, self.n_estimators)
 
         if sample_random:
             indices = np.random.choice(
-                len(self.estimators_), size=n_trees, replace=False)
+                len(self.estimators_), size=ntrees, replace=False)
         else:
-            indices = np.arange(n_trees)
+            indices = np.arange(ntrees)
         predictions = [tree.predict(X)
                        for tree in np.array(self.estimators_)[indices]]
         return self._majority_vote(predictions)
@@ -114,12 +114,12 @@ class Ntree_RandForest_Regressor(RandomForestRegressor):
     Please refer to the sklearn-documentation for the standard parameters here: 
     https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
 
-    The only difference are the two extra methods `predict_ntree` and `tune_ntree`.
+    The only difference are the two extra methods `predict_ntrees` and `tune_ntree`.
 
     Methods (additional to sklearn):
     -------------------------------
 
-        `predict_ntree(X, ntrees, sample_random)`:
+        `predict_ntrees(X, ntrees, sample_random)`:
             This method is like the `predict` method only that it let's you choose how many trees of the forest should be used for prediction. The `sample_random` parameter lets you decide which how the trees should be selected. Read the method description for more details.
 
         `tune_ntree(X, y, min_trees, max_trees, delta_trees, sample_random, random_state)`:
@@ -130,7 +130,7 @@ class Ntree_RandForest_Regressor(RandomForestRegressor):
         super().__init__(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
                          max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start, ccp_alpha=ccp_alpha, max_samples=max_samples)
 
-    def predict_ntrees(self, X: np.ndarray, n_trees: int = None, sample_random: bool = False, random_state: int = None) -> np.ndarray:
+    def predict_ntrees(self, X: np.ndarray, ntrees: int = None, sample_random: bool = False, random_state: int = None) -> np.ndarray:
         """Generate predictions with the `Ntree_RandForest_Regressor` model on a dataset X and choose the number of trees used for that prediction.
 
         Args:
@@ -142,21 +142,21 @@ class Ntree_RandForest_Regressor(RandomForestRegressor):
         Returns:
             np.ndarray: 1D-np.ndarray with predictions. As many predictions as observations in X.
         """
-        if n_trees is None:
-            n_trees = self.n_estimators  # Use all trees by default
+        if ntrees is None:
+            ntrees = self.n_estimators  # Use all trees by default
         else:
             # Ensure we don't exceed the number of trees
-            n_trees = min(n_trees, self.n_estimators)
+            ntrees = min(ntrees, self.n_estimators)
 
         if sample_random:
             rng = np.random.default_rng(random_state)
             indices = rng.choice(
-                len(self.estimators_), size=n_trees, replace=False)
+                len(self.estimators_), size=ntrees, replace=False)
         else:
-            indices = np.arange(n_trees)
+            indices = np.arange(ntrees)
 
         N = X.shape[0]
-        predictions = np.zeros((N, n_trees))
+        predictions = np.zeros((N, ntrees))
         for i, tree in enumerate(np.array(self.estimators_)[indices]):
             predictions[:, i] = tree.predict(X)
 

@@ -1,5 +1,5 @@
 # , tune_ntree_rf, tune_ntree_gb
-from ntree_tuning import Ntree_RandForest_Classifier, Ntree_RandForest_Regressor, Ntree_GradBoost_Classifier, Ntree_GradBoost_Regressor
+from ntrees_tuning import Ntree_RandForest_Classifier, Ntree_RandForest_Regressor, Ntree_GradBoost_Classifier, Ntree_GradBoost_Regressor
 from sklearn.datasets import make_regression, make_classification
 from . import RANDOM_STATE
 import pytest
