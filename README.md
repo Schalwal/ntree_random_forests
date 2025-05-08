@@ -1,4 +1,4 @@
-The package `ntree_tuning` is an extension to `sklearn`. To Random Forests and Gradient Boosting it adds the `ntree` parameter which gives control over how many trees are used for prediction. The main benefit is that it enables to tune the `ntree` parameter w.r.t. the OOB-error without having to retrain a new model for each value of `ntrees`.
+The package **ntree_tuning** is an **extension to sklearn**. To Random Forests and Gradient Boosting it adds the `ntrees` parameter which gives control over how many trees are used for prediction. The main benefit is that it enables to tune the `ntrees` parameter w.r.t. the OOB-error without having to retrain a new model for each value of `ntrees`.
 
 The package introduces subclasses to the `sklearn`-classes of Random Forest and Gradient Boosting (RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor). Each adds two new methods called `predict_ntree` and `tune_ntree` which enable predicting and tuning the `ntrees` parameter possible
 
