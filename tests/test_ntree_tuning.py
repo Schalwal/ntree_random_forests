@@ -1,6 +1,9 @@
-from ntree_tuning import Ntree_RF_Classifier, Ntree_RF_Regressor, Ntree_GB_Classifier, Ntree_GB_Regressor, tune_ntree_rf, tune_ntree_gb
+# , tune_ntree_rf, tune_ntree_gb
+from ntree_tuning import Ntree_RandForest_Classifier, Ntree_RandForest_Regressor, Ntree_GradBoost_Classifier, Ntree_GradBoost_Regressor
 from sklearn.datasets import make_regression, make_classification
 from . import RANDOM_STATE
+import pytest
+import numpy as np
 
 
 def test_cls_tuner():
@@ -9,19 +12,20 @@ def test_cls_tuner():
 
     n_estimators = 100
 
-    rf_cls = Ntree_RF_Classifier(n_estimators=n_estimators)
+    rf_cls = Ntree_RandForest_Classifier(n_estimators=n_estimators)
     rf_cls.fit(Xcls, ycls)
-    gb_cls = Ntree_GB_Classifier(n_estimators=n_estimators, subsample=0.8)
+    gb_cls = Ntree_GradBoost_Classifier(
+        n_estimators=n_estimators, subsample=0.8)
     gb_cls.fit(Xcls, ycls)
 
     min_trees = 20
     max_trees = 100
     delta_trees = 10
 
-    rf_ntree_dict = tune_ntree_rf(
-        rf_cls, Xcls, ycls, min_trees=min_trees, max_trees=max_trees, delta_trees=delta_trees)
+    rf_ntree_dict = rf_cls.tune_ntrees(
+        Xcls, ycls, min_trees=min_trees, max_trees=max_trees, delta_trees=delta_trees)
 
-    gb_ntree_dict = tune_ntree_gb(gb_cls)
+    gb_ntree_dict = gb_cls.tune_ntrees()
 
     # check that dict is correct
     assert isinstance(rf_ntree_dict, dict)
@@ -37,21 +41,45 @@ def test_regression_tuner():
     Xreg, yreg = make_regression(
         n_samples=200, n_features=20, random_state=RANDOM_STATE)
     n_estimators = 100
-    rf_reg = Ntree_RF_Regressor(n_estimators=n_estimators)
+    rf_reg = Ntree_RandForest_Regressor(n_estimators=n_estimators)
     rf_reg.fit(Xreg, yreg)
-    gb_reg = Ntree_GB_Regressor(n_estimators=n_estimators, subsample=0.8)
+    gb_reg = Ntree_GradBoost_Regressor(
+        n_estimators=n_estimators, subsample=0.8)
     gb_reg.fit(Xreg, yreg)
 
     min_trees = 20
     max_trees = 100
     delta_trees = 10
 
-    rf_ntree_dict = tune_ntree_rf(rf_reg, Xreg, yreg, min_trees=min_trees,
-                                  max_trees=max_trees, delta_trees=delta_trees)
-    gb_ntree_dict = tune_ntree_gb(gb_reg)
+    rf_ntree_dict = rf_reg.tune_ntrees(Xreg, yreg, min_trees=min_trees,
+                                       max_trees=max_trees, delta_trees=delta_trees)
+    gb_ntree_dict = gb_reg.tune_ntrees()
 
     assert len(rf_ntree_dict) == 9
     assert len(gb_ntree_dict) == n_estimators
+
+
+def test_is_model_fitted():
+
+    Xcls, ycls = make_classification(
+        n_samples=200, n_features=20, n_classes=3, random_state=RANDOM_STATE, n_clusters_per_class=3, n_informative=5)
+    Xreg, yreg = make_regression(
+        n_samples=200, n_features=20, random_state=RANDOM_STATE)
+
+    rf_cls = Ntree_RandForest_Classifier()
+    rf_reg = Ntree_RandForest_Regressor()
+    gb_cls = Ntree_GradBoost_Classifier(subsample=0.8)
+    gb_reg = Ntree_GradBoost_Regressor(subsample=0.8)
+
+    error_message = 'The `estimators_` attribute is missing in the model. You probably have not fitted the model yet which however is necessary to call the method `tune_ntrees`'
+
+    for rf_model in [rf_cls, rf_reg]:
+        with pytest.raises(ValueError, match=error_message):
+            rf_model.tune_ntrees(X=Xreg, y=yreg)
+
+    for gb_model in [gb_cls, gb_reg]:
+        with pytest.raises(ValueError, match=error_message):
+            gb_model.tune_ntrees()
 
 
 def is_valid_dict(d):

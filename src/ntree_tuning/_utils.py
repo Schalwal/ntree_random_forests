@@ -1,5 +1,3 @@
-
-from typing import Union
 from sklearn.ensemble import BaseEnsemble
 from warnings import warn
 

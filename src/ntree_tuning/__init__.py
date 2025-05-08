@@ -1,4 +1,2 @@
-from ._rf_classes import Ntree_RF_Classifier, Ntree_RF_Regressor
-from ._gb_classes import Ntree_GB_Classifier, Ntree_GB_Regressor
-from ._rf import tune_ntree_rf
-from ._gb import tune_ntree_gb
+from ._randforest import Ntree_RandForest_Classifier, Ntree_RandForest_Regressor
+from ._gradboost import Ntree_GradBoost_Classifier, Ntree_GradBoost_Regressor
