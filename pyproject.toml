@@ -4,16 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ntrees_tuning"
-version = "0.1.0"
-description = "The package **ntrees_tuning** is an **extension to sklearn**. To Random Forests and Gradient Boosting it adds the `ntrees` parameter which gives control over how many trees are used for prediction. The main benefit is that it enables to tune the `ntrees` parameter w.r.t. the OOB-error without having to retrain a new model for each value of `ntrees`."
+version = "0.1.1"
+description = "The package ntrees_tuning is an extension to sklearn. To Random Forests and Gradient Boosting it adds the ntrees parameter which gives control over how many trees are used for prediction. The main benefit is that it enables to tune the ntrees parameter w.r.t. the OOB-error without having to retrain a new model for each value of ntrees."
 readme = "README.md"
+license = "MIT"
 authors = [{ name = "Schalwal", email = "walmitschal@proton.me" }]
 dependencies = [
     "scikit-learn>=1.3.2",
     "scipy>=1.7.0",
     "numpy>=1.21.0"
 ]
-license = "MIT"
 
 [tool.pytest.ini_options]
 pythonpath = [
