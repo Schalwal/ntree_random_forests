@@ -2,6 +2,13 @@ The package **ntrees_tuning** is an **extension to sklearn**. To Random Forests 
 
 The package introduces subclasses to the `sklearn`-classes of Random Forest and Gradient Boosting (RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor). Each adds two new methods called `predict_ntree` and `tune_ntree` which enable predicting and tuning the `ntrees` parameter possible
 
+## Installation
+
+```bash
+pip install ntrees_tuning
+```
+
+
 ## Example usage:
 
 
